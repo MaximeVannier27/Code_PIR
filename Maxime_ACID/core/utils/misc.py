@@ -64,8 +64,9 @@ def extend_dataset(model, df, cats, label_tag):
         attack_type = cats[i]
         with torch.no_grad():
             label = model(x)[0]
+            
         label = label[0].max(dim=0).indices
-        print(f"Label: {label}")
+
         label = label.item()
 
         features = model.sub_nets[label].kernel_weights
