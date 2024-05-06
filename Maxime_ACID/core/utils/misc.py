@@ -50,19 +50,23 @@ def extend_dataset(model, df, cats, label_tag):
     cols = df.columns.values.tolist()
     rf_features = []
 
-    for i in range(model.kernels_size):
+    for i in range(model.kernel_size):
         cols.append(f'kernel_feature_{i}')
     cols.append(label_tag)
 
     print(f"Creating extended dataset...")
+
     for i, row in df.iterrows():
         rf_features_tmp = row.tolist()
         x = torch.FloatTensor(np.array([rf_features_tmp]))
+        if i%1000 == 0:
+            print(f"Processing {i}th sample...")
         attack_type = cats[i]
         with torch.no_grad():
             label = model(x)[0]
-        label = label.max(dim=1).indices
-        label = label[0][0].item()
+        label = label[0].max(dim=0).indices
+        print(f"Label: {label}")
+        label = label.item()
 
         features = model.sub_nets[label].kernel_weights
 
