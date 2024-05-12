@@ -33,7 +33,7 @@ y_test = np.array(C)
 X_train = np.array(trainX)
 X_test = np.array(testT)
 
-batch_size = 1024
+batch_size = 64
 
 # 1. define the network
 model = Sequential()
@@ -49,24 +49,35 @@ model.add(Dense(128,activation='relu'))
 model.add(Dropout(0.01))
 model.add(Dense(1))
 model.add(Activation('sigmoid'))
-model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
+model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy', 'precision', 'recall'])
 
 @track_emissions
 def training(X_train, y_train, batch_size, model): 
 
   # try using different optimizers and different optimizer configs
 
-  #checkpointer = callbacks.ModelCheckpoint(filepath="./Tanguy_DNN/resultats/checkpoints/checkpoint-#{epoch:02d}.keras", verbose=1, save_best_only=True, monitor='loss')
-  #csv_logger = CSVLogger('training_set_dnnanalysis.csv',separator=',', append=False)
+  checkpointer = callbacks.ModelCheckpoint(filepath="./Tanguy_DNN/resultats/checkpoints/checkpoint-#{epoch:02d}.keras", verbose=1, save_best_only=True, monitor='loss')
+  csv_logger = CSVLogger('training_set_dnnanalysis.csv',separator=',', append=False)
 
-  model.fit(X_train, y_train, validation_data=None, batch_size=batch_size, epochs=1)
-  #callbacks=[checkpointer,csv_logger])
+  model.fit(X_train, y_train, validation_data=None, batch_size=batch_size, epochs=1, verbose=2,callbacks=[checkpointer,csv_logger])
   return model
 
 model = training(X_train, y_train, batch_size, model)
 save_model(model, "./Tanguy_DNN/resultats/final/dnn5layer_model.keras")
 
+@track_emissions
+def testing(X_test, y_test, model):
+    # Évaluation du modèle sur les données de test
+    scores = model.evaluate(X_test, y_test, verbose=2)
+    
+    # Affichage de la précision et de la perte
+    print("Test Accuracy: %.2f%%" % (scores[1]*100))
+    print("Test Precision: %.2f%%" % (scores[2]*100))
+    print("Test Recall: %.2f%%" % (scores[3]*100))
+    print("Test Loss: %.2f" % scores[0])
 
+# Appel de la fonction testing
+testing(X_test, y_test, model)
 
 
 
