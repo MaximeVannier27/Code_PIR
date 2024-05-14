@@ -1,5 +1,10 @@
-
 /Maxime_ACID/datasets/**
-/Tanguy_DNN/dataset/**
-/Tanguy_DNN/resultats/**
+
+/Tanguy_DNN/datasets/ressources/**
+/Tanguy_DNN/datasets/decoupage_KDDcup99/*
+!Tanguy_DNN/datasets/decoupage_KDDcup99/KDDcup99_datasets_finaux.zip
+/Tanguy_DNN/datasets/decoupage_NSL_KDD/*
+!Tanguy_DNN/datasets/decoupage_KDDcup99/NSL_KDD_datasets_finaux.zip
+/Tanguy_DNN/datasets/datasets_formatage/**
+
 /Remy_Autoencoder/dataset/**

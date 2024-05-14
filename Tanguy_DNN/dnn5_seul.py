@@ -10,15 +10,16 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau, C
 from keras.models import save_model
 
 from sklearn.preprocessing import Normalizer
+from keras.utils import to_categorical
 
 from codecarbon import track_emissions
 
-traindata = pd.read_csv(r'./Tanguy_DNN/dataset/traindata1.csv', header=None)
-testdata = pd.read_csv(r'./Tanguy_DNN/dataset/testdata1.csv', header=None)
+traindata = pd.read_csv(r"./Tanguy_DNN/datasets/decoupage_KDDcup99/traindata3.csv", header=None)
+testdata = pd.read_csv(r"./Tanguy_DNN/datasets/decoupage_KDDcup99/testdata3.csv", header=None)
 
-X = traindata.iloc[:,0:42]
+X = traindata.iloc[:,0:41]
 Y = traindata.iloc[:,41]
-T = testdata.iloc[:,0:42]
+T = testdata.iloc[:,0:41]
 C = testdata.iloc[:,41]
 
 scaler = Normalizer().fit(X)
@@ -30,6 +31,9 @@ testT = scaler.transform(T)
 y_train = np.array(Y)
 y_test = np.array(C)
 
+#y_train= to_categorical(y_train1)
+#y_test= to_categorical(y_test1)
+
 X_train = np.array(trainX)
 X_test = np.array(testT)
 
@@ -37,7 +41,7 @@ batch_size = 64
 
 # 1. define the network
 model = Sequential()
-model.add(Dense(1024,input_dim=42,activation='relu'))  
+model.add(Dense(1024,input_dim=41,activation='relu'))  
 model.add(Dropout(0.01))
 model.add(Dense(768,activation='relu'))  
 model.add(Dropout(0.01))
@@ -49,17 +53,17 @@ model.add(Dense(128,activation='relu'))
 model.add(Dropout(0.01))
 model.add(Dense(1))
 model.add(Activation('sigmoid'))
-model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy', 'precision', 'recall'])
+model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
 
 @track_emissions
 def training(X_train, y_train, batch_size, model): 
 
   # try using different optimizers and different optimizer configs
 
-  checkpointer = callbacks.ModelCheckpoint(filepath="./Tanguy_DNN/resultats/checkpoints/checkpoint-#{epoch:02d}.keras", verbose=1, save_best_only=True, monitor='loss')
+  checkpointer = callbacks.ModelCheckpoint(filepath="./Tanguy_DNN/resultats/checkpoints/checkpoint-#{epoch:02d}.keras", verbose=2, save_best_only=True, monitor='loss')
   csv_logger = CSVLogger('training_set_dnnanalysis.csv',separator=',', append=False)
 
-  model.fit(X_train, y_train, validation_data=None, batch_size=batch_size, epochs=1, verbose=2,callbacks=[checkpointer,csv_logger])
+  model.fit(X_train, y_train, validation_data=None, batch_size=batch_size, epochs=100, verbose=1,callbacks=[checkpointer,csv_logger])
   return model
 
 model = training(X_train, y_train, batch_size, model)
@@ -72,8 +76,6 @@ def testing(X_test, y_test, model):
     
     # Affichage de la précision et de la perte
     print("Test Accuracy: %.2f%%" % (scores[1]*100))
-    print("Test Precision: %.2f%%" % (scores[2]*100))
-    print("Test Recall: %.2f%%" % (scores[3]*100))
     print("Test Loss: %.2f" % scores[0])
 
 # Appel de la fonction testing

@@ -1,2 +1,0 @@
-epoch,accuracy,loss,precision,recall,val_accuracy,val_loss,val_precision,val_recall
-0,0.9862101674079895,0.010306947864592075,0.9977085590362549,0.8640586733818054,NA,NA,NA,NA
