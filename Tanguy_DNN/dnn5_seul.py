@@ -61,7 +61,7 @@ def training(X_train, y_train, batch_size, model):
   # try using different optimizers and different optimizer configs
 
   checkpointer = callbacks.ModelCheckpoint(filepath="./Tanguy_DNN/resultats/checkpoints/checkpoint-#{epoch:02d}.keras", verbose=2, save_best_only=True, monitor='loss')
-  csv_logger = CSVLogger('training_set_dnnanalysis.csv',separator=',', append=False)
+  csv_logger = CSVLogger('./Tanguy_DNN/training_set_dnnanalysis.csv',separator=',', append=False)
 
   model.fit(X_train, y_train, validation_data=None, batch_size=batch_size, epochs=100, verbose=1,callbacks=[checkpointer,csv_logger])
   return model
