@@ -1,8 +1,8 @@
 import pickle
 
-root = './results/'
+root = './results_150/handler.pkl'
 # Charger le fichier .pkl
-with open(root+"jeu_de_donnees/dico_enviro.pkl", 'rb') as fichier:
+with open(root, 'rb') as fichier:
     contenu = pickle.load(fichier)
 
 # Afficher le contenu
