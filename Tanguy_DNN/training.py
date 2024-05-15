@@ -9,26 +9,20 @@ from sklearn.preprocessing import Normalizer
 from codecarbon import track_emissions
 import json
 import os
+from codecarbon import EmissionsTracker
+from keras.models import save_model
 
-traindata = pd.read_csv(r"./Tanguy_DNN/datasets/decoupage_KDDcup99/traindata3.csv", header=None)
-testdata = pd.read_csv(r"./Tanguy_DNN/datasets/decoupage_KDDcup99/testdata3.csv", header=None)
+traindata = pd.read_csv(r"./Tanguy_DNN/datasets/datasets_formatage/kddcup_formatage_biaise.csv", header=None)
 
 X = traindata.iloc[:,0:41]
 Y = traindata.iloc[:,41]
-T = testdata.iloc[:,0:41]
-C = testdata.iloc[:,41]
 
 scaler = Normalizer().fit(X)
 trainX = scaler.transform(X)
 
-scaler = Normalizer().fit(T)
-testT = scaler.transform(T)
-
 y_train = np.array(Y)
-y_test = np.array(C)
 
 X_train = np.array(trainX)
-X_test = np.array(testT)
 
 batch_size = 1024
 
@@ -44,9 +38,16 @@ class BatchMetricsCallback(callbacks.Callback):
 # Définir la fonction d'entraînement avec l'utilisation du callback personnalisé
 @track_emissions
 def training(X_train, y_train, batch_size, model):
+
+    tracker = EmissionsTracker(output_dir="./Tanguy_DNN/resultats/emissions", output_file="emissions_training.csv")
+    tracker.start()
+
     checkpointer = ModelCheckpoint(filepath="./Tanguy_DNN/resultats/checkpoints/checkpoint-{epoch:02d}.keras", verbose=1, save_best_only=True, monitor='loss')
-    csv_logger = CSVLogger('training_set_dnnanalysis.csv', separator=',', append=False)
+    csv_logger = CSVLogger('./Tanguy_DNN/training_set_dnnanalysis.csv', separator=',', append=False)
     model.fit(X_train, y_train, validation_data=None, batch_size=batch_size, epochs=2, verbose=1, callbacks=[checkpointer, csv_logger, BatchMetricsCallback()])
+
+    tracker.stop()
+    
     return model
 
 # Appeler la fonction d'entraînement
@@ -66,6 +67,7 @@ model.add(Activation('sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 model = training(X_train, y_train, batch_size, model)
+save_model(model, "./Tanguy_DNN/resultats/final/dnn5layer_model.keras")
 
 # Enregistrer le dictionnaire de métriques dans un fichier JSON
 metrics_file_path = "./Tanguy_DNN/resultats/metrics/metrics_history.json"
