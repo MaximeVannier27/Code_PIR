@@ -2,6 +2,7 @@ import pickle as pkl
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats as st
+import math
 
 #Path Maxime
 maxime_root = './Maxime_ACID/results_ekip/'
@@ -67,16 +68,22 @@ print("Remy",remy_std_loss[:1000])
 
 
 plt.figure(figsize=(15, 7.5),facecolor='lightgrey')
-plt.errorbar(x[:1000], maxime_loss[:1000], yerr=[maxime_std_loss[i]*0.5 if (i%30==0) else 0 for i in range(len(maxime_std_loss[:1000]))], label='ACID', color='blue',ecolor='lightblue')
-plt.errorbar(x[:1000], louise_loss[:1000], yerr=[louise_std_loss[i] if (i%16==0) else 0 for i in range(len(louise_std_loss[:1000]))], label='DAGMM', color='green',ecolor='lightgreen')
-plt.errorbar(x[:1000], tanguy_loss[:1000], yerr=[tanguy_std_loss[i] if (i%13==0) else 0 for i in range(len(tanguy_std_loss[:1000]))], label='DNN', color='orange',ecolor='lightcoral')
-plt.errorbar(x[:1000], remy_loss[:1000], yerr=[remy_std_loss[i] if (i%10==0) else 0 for i in range(len(remy_std_loss[:1000]))], label='N-BAIOT', color='purple',ecolor='violet')
-#METTEZ LA MEME LIGNE QUE MOI MAIS AVEC VOS TRUCS
+# plt.errorbar(x[:1000], [(maxime_loss[i]) for i in range(len(maxime_loss[:1000]))], yerr=[((maxime_std_loss[i]*0.5)) if (i%70==0) else 0 for i in range(len(maxime_std_loss[:1000]))], label='ACID', color='blue',ecolor='lightblue')
+# plt.errorbar(x[:1000], [(louise_loss[i]) for i in range(len(louise_loss[:1000]))], yerr=[((louise_std_loss[i])) if (i%75==0) else 0 for i in range(len(louise_std_loss[:1000]))], label='DAGMM', color='green',ecolor='lightgreen')
+# plt.errorbar(x[:1000], [(tanguy_loss[i]) for i in range(len(tanguy_loss[:1000]))], yerr=[((tanguy_std_loss[i])) if (i%80==0) else 0 for i in range(len(tanguy_std_loss[:1000]))], label='DNN', color='orange',ecolor='lightcoral')
+# plt.errorbar(x[:1000], [(remy_loss[i]) for i in range(len(remy_loss[:1000]))], yerr=[((remy_std_loss[i])) if (i%85==0) else 0 for i in range(len(remy_std_loss[:1000]))], label='N-BAIOT', color='purple',ecolor='violet')
+
+plt.plot(x[:1000], [(maxime_loss[i]) for i in range(len(maxime_loss[:1000]))], label='ACID', color='blue')
+plt.plot(x[:1000], [(louise_loss[i]) for i in range(len(louise_loss[:1000]))], label='DAGMM', color='green')
+plt.plot(x[:1000], [(tanguy_loss[i]) for i in range(len(tanguy_loss[:1000]))], label='DNN', color='orange')
+plt.plot(x[:1000], [(remy_loss[i]) for i in range(len(remy_loss[:1000]))],label='N-BAIOT', color='purple')
+
 
 
 
 plt.xlabel('Itérations')
 plt.ylabel('Loss')
+plt.ylim(-0.5, 3)
 plt.title('Loss en fonction des itérations pour chaque implémentation étudiée (à partir du même dataset)')
 plt.legend()
 plt.grid()
