@@ -12,7 +12,7 @@ import os
 from codecarbon import EmissionsTracker
 from keras.models import save_model
 
-traindata = pd.read_csv(r"./Tanguy_DNN/datasets/datasets_formatage/kddcup_formatage_biaise.csv", header=None)
+traindata = pd.read_csv(r"./Tanguy_DNN/datasets/decoupage_KDDcup99/traindata1.csv", header=None)
 
 X = traindata.iloc[:,0:41]
 Y = traindata.iloc[:,41]
@@ -42,9 +42,9 @@ def training(X_train, y_train, batch_size, model):
     tracker = EmissionsTracker(output_dir="./Tanguy_DNN/resultats/emissions", output_file="emissions_training.csv")
     tracker.start()
 
-    checkpointer = ModelCheckpoint(filepath="./Tanguy_DNN/resultats/checkpoints/checkpoint-{epoch:02d}.keras", verbose=1, save_best_only=True, monitor='loss')
+    checkpointer = ModelCheckpoint(filepath="./Tanguy_DNN/resultats/checkpoints/checkpoint_dnn5layer_model_batch1024_1-{epoch:02d}.keras", verbose=1, save_best_only=True, monitor='loss')
     csv_logger = CSVLogger('./Tanguy_DNN/training_set_dnnanalysis.csv', separator=',', append=False)
-    model.fit(X_train, y_train, validation_data=None, batch_size=batch_size, epochs=2, verbose=1, callbacks=[checkpointer, csv_logger, BatchMetricsCallback()])
+    model.fit(X_train, y_train, validation_data=None, batch_size=batch_size, epochs=4, verbose=1, callbacks=[checkpointer, csv_logger, BatchMetricsCallback()])
 
     tracker.stop()
     
@@ -52,24 +52,24 @@ def training(X_train, y_train, batch_size, model):
 
 # Appeler la fonction d'entraînement
 model = Sequential()
-model.add(Dense(1024, input_dim=41, activation='relu'))  
+model.add(Dense(1024,input_dim=41,activation='relu'))  
 model.add(Dropout(0.01))
-model.add(Dense(768, activation='relu'))  
+model.add(Dense(768,activation='relu'))  
 model.add(Dropout(0.01))
-model.add(Dense(512, activation='relu'))  
+model.add(Dense(512,activation='relu'))  
 model.add(Dropout(0.01))
-model.add(Dense(256, activation='relu'))  
+model.add(Dense(256,activation='relu'))  
 model.add(Dropout(0.01))
-model.add(Dense(128, activation='relu'))  
+model.add(Dense(128,activation='relu'))  
 model.add(Dropout(0.01))
 model.add(Dense(1))
 model.add(Activation('sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 model = training(X_train, y_train, batch_size, model)
-save_model(model, "./Tanguy_DNN/resultats/final/dnn5layer_model.keras")
+save_model(model, "./Tanguy_DNN/resultats/final/dnn5layer_model_batch1024_1.keras")
 
 # Enregistrer le dictionnaire de métriques dans un fichier JSON
-metrics_file_path = "./Tanguy_DNN/resultats/metrics/metrics_history.json"
+metrics_file_path = "./Tanguy_DNN/resultats/metrics/metrics_dnn5layer_model_batch1024_1.json"
 with open(metrics_file_path, "w") as json_file:
     json.dump(metrics_history, json_file)
