@@ -61,8 +61,8 @@ std_loss_150 = std_loss_150[:2000]
 std_loss_200 = std_loss_200[:2000]
 
 plt.figure(figsize=(15,7.5),facecolor='lightgrey')
-plt.errorbar(x[:2000], loss_60[:2000], yerr=[std_loss_60[i]*0.07 if (i%50==0) else 0 for i in range(len(std_loss_60))], label='Modèle 60')
-plt.errorbar(x[:2000], loss_100[:2000], yerr=[std_loss_100[i]*0.1 if (i%60==0) else 0 for i in range(len(std_loss_100))], label='Modèle 100')
+plt.errorbar(x[:2000], loss_60[:2000], yerr=[std_loss_60[i]*0.1 if (i%50==0) else 0 for i in range(len(std_loss_60))], label='Modèle 60')
+plt.errorbar(x[:2000], loss_100[:2000], yerr=[std_loss_100[i]*0.15 if (i%60==0) else 0 for i in range(len(std_loss_100))], label='Modèle 100')
 plt.errorbar(x[:2000], loss_150[:2000], yerr=[std_loss_150[i] if (i%70==0) else 0 for i in range(len(std_loss_150))], label='Modèle 150')
 plt.errorbar(x[:2000], loss_200[:2000], yerr=[std_loss_200[i] if (i%80==0) else 0 for i in range(len(std_loss_200))], label='Modèle 200')
 
