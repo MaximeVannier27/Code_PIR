@@ -12,12 +12,15 @@ import sys
 import random
 import pickle
 #import tensor as tf
+import json
 
 # Keras imports
 from keras.layers import Dense
 from keras.optimizers import SGD
 from keras.models import Sequential
 from keras.callbacks import TensorBoard, EarlyStopping
+from keras import callbacks
+from keras.callbacks import ModelCheckpoint, CSVLogger
 
 # Sklearn imports
 from sklearn.preprocessing import StandardScaler
@@ -75,8 +78,29 @@ def mean_confidence_interval(data, confidence=0.98):
 if __name__ == "__main__":
 
 
-    epochs = 100
+    epochs = 150
     batch_size = 1024
+
+    # Définir un dictionnaire pour stocker les métriques de chaque batch
+    metrics_history = {"batch_size": batch_size, "metrics": {"accuracy": [], "loss": []}}
+    metrics_history2 = {"batch_size": batch_size, "metrics": {"accuracy": [], "loss": []}}
+    metrics_history3 = {"batch_size": batch_size, "metrics": {"accuracy": [], "loss": []}}
+
+    # Définir un callback personnalisé pour enregistrer les métriques à chaque batch
+    class BatchMetricsCallback(callbacks.Callback):
+        def on_batch_end(self, batch, logs=None):
+            metrics_history["metrics"]["accuracy"].append(logs.get("accuracy"))
+            metrics_history["metrics"]["loss"].append(logs.get("loss"))
+            
+    class BatchMetricsCallback2(callbacks.Callback):
+        def on_batch_end(self, batch, logs=None):
+            metrics_history2["metrics"]["accuracy"].append(logs.get("accuracy"))
+            metrics_history2["metrics"]["loss"].append(logs.get("loss"))
+
+    class BatchMetricsCallback3(callbacks.Callback):
+        def on_batch_end(self, batch, logs=None):
+            metrics_history3["metrics"]["accuracy"].append(logs.get("accuracy"))
+            metrics_history3["metrics"]["loss"].append(logs.get("loss"))
 
     
     #dataset = pd.read_csv("kddcup_corrige.csv", header=None,names=['duration', 'protocol_type', 'service', 'flag', 'src_bytes', 'dst_bytes', 'land', 'wrong_fragment', 'urgent', 'hot', 'num_failed_logins', 'logged_in', 'num_compromised', 'root_shell', 'su_attempted', 'num_root', 'num_file_creations', 'num_shells', 'num_access_files', 'num_outbound_cmds', 'is_host_login', 'is_guest_login', 'count', 'srv_count', 'serror_rate', 'srv_serror_rate', 'rerror_rate', 'srv_rerror_rate', 'same_srv_rate', 'diff_srv_rate', 'srv_diff_host_rate', 'dst_host_count', 'dst_host_srv_count', 'dst_host_same_srv_rate', 'dst_host_diff_srv_rate', 'dst_host_same_src_port_rate', 'dst_host_srv_diff_host_rate', 'dst_host_serror_rate', 'dst_host_srv_serror_rate', 'dst_host_rerror_rate', 'dst_host_srv_rerror_rate', 'label'])
@@ -87,15 +111,15 @@ if __name__ == "__main__":
     traindata3 = pd.read_csv(r'./dataset/traindata3.csv', header=None)
 
     
-    begnin1 = traindata1[traindata1[41] == 0]
+    begnin1 = traindata1#[traindata1[41] == 0]
     X1_train = begnin1.iloc[:,0:41]
     Y1_train = traindata1.iloc[:,41]
 
-    begnin2 = traindata2[traindata2[41] == 0]
+    begnin2 = traindata2#[traindata2[41] == 0]
     X2_train = begnin2.iloc[:,0:41]
     Y2_train = traindata2.iloc[:,41]
 
-    begnin3 = traindata3[traindata3[41] == 0]
+    begnin3 = traindata3#[traindata3[41] == 0]
     X3_train = begnin3.iloc[:,0:41]
     Y3_train = traindata3.iloc[:,41]
 
@@ -137,13 +161,13 @@ if __name__ == "__main__":
     model3.compile(loss="mean_squared_error", optimizer="sgd", metrics=['accuracy'])
 
     X_train_scaled = _scaler.fit_transform(X1_train)
-    history1 = model1.fit(X_train_scaled, X_train_scaled, validation_data=None, batch_size=batch_size, epochs=epochs)
+    history1 = model1.fit(X_train_scaled, X_train_scaled, validation_data=None, batch_size=batch_size, epochs=epochs, callbacks=[BatchMetricsCallback()])
 
     X_train_scaled = _scaler.fit_transform(X2_train)
-    history2 = model2.fit(X_train_scaled, X_train_scaled, validation_data=None, batch_size=batch_size, epochs=epochs)
+    history2 = model2.fit(X_train_scaled, X_train_scaled, validation_data=None, batch_size=batch_size, epochs=epochs, callbacks=[BatchMetricsCallback2()])
 
     X_train_scaled = _scaler.fit_transform(X3_train)
-    history3 = model3.fit(X_train_scaled, X_train_scaled, validation_data=None, batch_size=batch_size, epochs=epochs)
+    history3 = model3.fit(X_train_scaled, X_train_scaled, validation_data=None, batch_size=batch_size, epochs=epochs, callbacks=[ BatchMetricsCallback3()])
     tracker.stop()
    
     train_loss1 = history1.history['loss']
@@ -211,15 +235,28 @@ if __name__ == "__main__":
     plt.legend()
     plt.show()
 
-    with open('val_loss_remy.pkl', 'wb') as file:
+    #with open('val_loss_remy.pkl', 'wb') as file:
         # Utiliser pickle.dump() pour écrire l'objet dans le fichier
-        pickle.dump(mean_train_loss, file)
+        #pickle.dump(mean_train_loss, file)
 
 
-    with open('std_loss_remy.pkl', 'wb') as file:
+    #with open('std_loss_remy.pkl', 'wb') as file:
         # Utiliser pickle.dump() pour écrire l'objet dans le fichier
-        pickle.dump(liste_barres, file)
+        #pickle.dump(liste_barres, file)
     
+    # Enregistrer le dictionnaire de métriques dans un fichier JSON
+    metrics_file_path = "./metrics_autoencoder_model_batch1024_1.json"
+    with open(metrics_file_path, "w") as json_file:
+        json.dump(metrics_history, json_file)
+
+    metrics_file_path2 = "./metrics_autoencoder_model_batch1024_2.json"
+    with open(metrics_file_path2, "w") as json_file:
+        json.dump(metrics_history2, json_file)
+
+    metrics_file_path3 = "./metrics_autoencoder_model_batch1024_3.json"
+    with open(metrics_file_path3, "w") as json_file:
+        json.dump(metrics_history3, json_file)
+
     
         
        
