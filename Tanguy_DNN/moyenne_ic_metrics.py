@@ -2,6 +2,7 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats as st
+import pickle
 
 # Charger les données depuis les fichiers JSON
 metrics_file_path = "./Tanguy_DNN/resultats/metrics/metrics_dnn5layer_model_batch1024_1.json"
@@ -35,9 +36,14 @@ liste_intervalle=[]
 for i in range (len(losses3)): 
     loss_moy=(losses1[i]+losses2[i]+losses3[i])/3
     liste_loss_moy.append(loss_moy)
-    if i%50==0 :
-        h=confidence_interval([losses1[i],losses2[i],losses3[i]],0.95)
-        liste_intervalle.append(h)
+    
+    h=confidence_interval([losses1[i],losses2[i],losses3[i]],0.95)
+    liste_intervalle.append(h)
 
+with open('val_loss_DNN.pkl', 'wb') as file:
+            # Utiliser pickle.dump() pour écrire l'objet dans le fichier
+            pickle.dump(liste_loss_moy, file)
 
-print(liste_intervalle)
+with open('val_ic_DNN.pkl', 'wb') as file:
+            # Utiliser pickle.dump() pour écrire l'objet dans le fichier
+            pickle.dump(liste_intervalle, file)
