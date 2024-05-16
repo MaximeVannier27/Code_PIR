@@ -24,32 +24,53 @@ with open(maxime_donnees+"moyenne_loss.pkl", "rb") as f:
 with open(maxime_donnees+"std_loss.pkl", "rb") as f:
     maxime_std_loss = pkl.load(f)
 
+
 #Loss Louise
 with open(louise_donnees+"moy_loss.pkl", "rb") as f:
     louise_loss = pkl.load(f)
 with open(louise_donnees+"erreur_loss.pkl", "rb") as f:
     louise_std_loss = pkl.load(f)
 
+#Loss Tanguy
+with open('./val_loss_DNN.pkl', "rb") as f:
+    tanguy_loss = pkl.load(f)
+with open('./val_ic_DNN.pkl', "rb") as f:
+    tanguy_std_loss = pkl.load(f)
 
-#REMPLISSEZ EN INITIALISANT VOS DONNEES DE LOSS ET DE STD LOSS (BARRES D'ERREURS) SI VOUS EN AVEZ
+#Loss Rémy
+with open('./val_loss_remy.pkl', "rb") as f:
+    remy_loss = pkl.load(f)
+with open('./std_loss_remy.pkl', "rb") as f:
+    remy_std_loss = pkl.load(f)
+
 
 
 #GRAPHES LOSS
 
-taille_x=max(len(maxime_loss), len(louise_loss) METTRE LA TAILLE DE VOTRE LISTE ICI     )
+taille_x=max(len(maxime_loss), len(louise_loss))
 x = [i for i in range(taille_x)]
 
-maxime_loss = [maxime_loss[i] if (i<len(maxime_loss)) else None for i in range(taille_x)]
-maxime_std_loss = [maxime_std_loss[i] if (i<len(maxime_std_loss)) else None for i in range(taille_x)]
-louise_loss = [louise_loss[i] if (i<len(louise_loss)) else None for i in range(taille_x)]
-louise_std_loss = [louise_std_loss[i] if (i<len(louise_std_loss)) else None for i in range(taille_x)]
+maxime_loss = [maxime_loss[i] if (i<len(maxime_loss)) else 0 for i in range(taille_x)]
+maxime_std_loss = [maxime_std_loss[i] if (i<len(maxime_std_loss)) else 0 for i in range(taille_x)]
+louise_loss = [louise_loss[i] if (i<len(louise_loss)) else 0 for i in range(taille_x)]
+louise_std_loss = [louise_std_loss[i] if (i<len(louise_std_loss)) else 0 for i in range(taille_x)]
+tanguy_loss = [tanguy_loss[i] if (i<len(tanguy_loss)) else 0 for i in range(taille_x)]
+tanguy_std_loss = [tanguy_std_loss[i] if (i<len(tanguy_std_loss)) else 0 for i in range(taille_x)]
+remy_loss = [remy_loss[i] if (i<len(remy_loss)) else 0 for i in range(taille_x)]
+remy_std_loss = [remy_std_loss[i] if (i<len(remy_std_loss)) else 0 for i in range(taille_x)]
 #REMPLISSEZ COMME MOI POUR ADAPTER AUTO LA TAILLE DE VOS DONNEES
+
+print("Tanguy",tanguy_std_loss[:1000])
+print("Remy",remy_std_loss[:1000])
 
 
 
 
 plt.figure(figsize=(15, 7.5),facecolor='lightgrey')
-plt.errorbar(x, maxime_loss, yerr=[maxime_std_loss[i] if (i%50==0) else 0 for i in range(len(maxime_std_loss))], label='ACID', color='blue')
+plt.errorbar(x[:1000], maxime_loss[:1000], yerr=[maxime_std_loss[i]*0.5 if (i%30==0) else 0 for i in range(len(maxime_std_loss[:1000]))], label='ACID', color='blue',ecolor='lightblue')
+plt.errorbar(x[:1000], louise_loss[:1000], yerr=[louise_std_loss[i] if (i%16==0) else 0 for i in range(len(louise_std_loss[:1000]))], label='DAGMM', color='green',ecolor='lightgreen')
+plt.errorbar(x[:1000], tanguy_loss[:1000], yerr=[tanguy_std_loss[i] if (i%13==0) else 0 for i in range(len(tanguy_std_loss[:1000]))], label='DNN', color='orange',ecolor='lightcoral')
+plt.errorbar(x[:1000], remy_loss[:1000], yerr=[remy_std_loss[i] if (i%10==0) else 0 for i in range(len(remy_std_loss[:1000]))], label='N-BAIOT', color='purple',ecolor='violet')
 #METTEZ LA MEME LIGNE QUE MOI MAIS AVEC VOS TRUCS
 
 
@@ -59,8 +80,9 @@ plt.ylabel('Loss')
 plt.title('Loss en fonction des itérations pour chaque implémentation étudiée (à partir du même dataset)')
 plt.legend()
 plt.grid()
-plt.show()
 plt.savefig('./loss_iterations_commun.png')
+plt.show()
+
 
 ##############################################################################################################
 #PARTIE ENVIRO
@@ -69,12 +91,14 @@ with open(maxime_donnees+"conso_CPU.pkl", "rb") as f:
     maxime_enviro = pkl.load(f)
 maxime_enviro = float(maxime_enviro)
 louise_enviro = 25.08
+tanguy_enviro = 31.9
+remy_enviro = 6.60
 #RECUPERER VOTRE VALEUR DE CONSO MOYENNE OU ECRIVEZ LA DIRECTEMENT DANS UNE VARIABLE
 
 
 #GRAPHES ENVIRO
-x = ["ACID", "DAGMM", METTRE VOTRE ALGO ICI MAIS DANS LE MÊME ORDRE QUE DANS VALEURS_HISTO]
-valeurs_histo = [maxime_enviro,louise_enviro, METTRE VOTRE VALEUR (EN FLOAT) ICI DANS LE MÊME ORDRE QUE DANS X]
+x = ["ACID", "DAGMM", "DNN","N-BAIOT"]
+valeurs_histo = [maxime_enviro,louise_enviro,tanguy_enviro,remy_enviro]
 
 
 
@@ -93,9 +117,11 @@ plt.show()
 
 maxime_precision = 0.9999697217360574
 louise_precision = 0.6850
+tanguy_precision = 0.9996
+remy_precision = 0.6877
 #METTEZ VOTRE VALEUR DE PRECISION DANS UNE VARIABLE
-x = ["ACID", "DAGMM",METTRE VOTRE ALGO ICI MAIS DANS LE MÊME ORDRE QUE DANS VALEURS_HISTO]
-valeurs_histo = [maxime_precision,louise_precision, METTRE VOTRE VALEUR (EN FLOAT) ICI DANS LE MÊME ORDRE QUE DANS X]
+x = ["ACID", "DAGMM", "DNN","N-BAIOT"]
+valeurs_histo = [maxime_precision,louise_precision,tanguy_precision,remy_precision]
 
 
 plt.figure(figsize=(15, 7.5),facecolor='lightgrey')
