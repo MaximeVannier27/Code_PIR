@@ -6,6 +6,7 @@ import scipy.stats as st
 #Path Maxime
 maxime_root = './Maxime_ACID/results_ekip/'
 maxime_donnees = maxime_root + 'jeu_de_donnees/'
+louise_donnees = './Louise_DaGMM/'
 ####################################################
 
 
@@ -23,18 +24,25 @@ with open(maxime_donnees+"moyenne_loss.pkl", "rb") as f:
 with open(maxime_donnees+"std_loss.pkl", "rb") as f:
     maxime_std_loss = pkl.load(f)
 
+#Loss Louise
+with open(louise_donnees+"moy_loss.pkl", "rb") as f:
+    louise_loss = pkl.load(f)
+with open(louise_donnees+"erreur_loss.pkl", "rb") as f:
+    louise_std_loss = pkl.load(f)
+
 
 #REMPLISSEZ EN INITIALISANT VOS DONNEES DE LOSS ET DE STD LOSS (BARRES D'ERREURS) SI VOUS EN AVEZ
 
 
 #GRAPHES LOSS
 
-taille_x=max(len(maxime_loss), METTRE LA TAILLE DE VOTRE LISTE ICI     )
+taille_x=max(len(maxime_loss), len(louise_loss) METTRE LA TAILLE DE VOTRE LISTE ICI     )
 x = [i for i in range(taille_x)]
 
 maxime_loss = [maxime_loss[i] if (i<len(maxime_loss)) else None for i in range(taille_x)]
 maxime_std_loss = [maxime_std_loss[i] if (i<len(maxime_std_loss)) else None for i in range(taille_x)]
-
+louise_loss = [louise_loss[i] if (i<len(louise_loss)) else None for i in range(taille_x)]
+louise_std_loss = [louise_std_loss[i] if (i<len(louise_std_loss)) else None for i in range(taille_x)]
 #REMPLISSEZ COMME MOI POUR ADAPTER AUTO LA TAILLE DE VOS DONNEES
 
 
@@ -60,12 +68,13 @@ plt.savefig('./loss_iterations_commun.png')
 with open(maxime_donnees+"conso_CPU.pkl", "rb") as f:
     maxime_enviro = pkl.load(f)
 maxime_enviro = float(maxime_enviro)
+louise_enviro = 25.08
 #RECUPERER VOTRE VALEUR DE CONSO MOYENNE OU ECRIVEZ LA DIRECTEMENT DANS UNE VARIABLE
 
 
 #GRAPHES ENVIRO
-x = ["ACID", METTRE VOTRE ALGO ICI MAIS DANS LE MÊME ORDRE QUE DANS VALEURS_HISTO]
-valeurs_histo = [maxime_enviro, METTRE VOTRE VALEUR (EN FLOAT) ICI DANS LE MÊME ORDRE QUE DANS X]
+x = ["ACID", "DAGMM", METTRE VOTRE ALGO ICI MAIS DANS LE MÊME ORDRE QUE DANS VALEURS_HISTO]
+valeurs_histo = [maxime_enviro,louise_enviro, METTRE VOTRE VALEUR (EN FLOAT) ICI DANS LE MÊME ORDRE QUE DANS X]
 
 
 
@@ -82,11 +91,11 @@ plt.show()
 ##############################################################################################################
 #PARTIE PRECISION
 
-maxime_precision = ca arrive l'ekip
-
+maxime_precision = 0.9999697217360574
+louise_precision = 0.6850
 #METTEZ VOTRE VALEUR DE PRECISION DANS UNE VARIABLE
-x = ["ACID", METTRE VOTRE ALGO ICI MAIS DANS LE MÊME ORDRE QUE DANS VALEURS_HISTO]
-valeurs_histo = [maxime_precision, METTRE VOTRE VALEUR (EN FLOAT) ICI DANS LE MÊME ORDRE QUE DANS X]
+x = ["ACID", "DAGMM",METTRE VOTRE ALGO ICI MAIS DANS LE MÊME ORDRE QUE DANS VALEURS_HISTO]
+valeurs_histo = [maxime_precision,louise_precision, METTRE VOTRE VALEUR (EN FLOAT) ICI DANS LE MÊME ORDRE QUE DANS X]
 
 
 plt.figure(figsize=(15, 7.5),facecolor='lightgrey')
