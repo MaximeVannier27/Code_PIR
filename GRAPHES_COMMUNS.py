@@ -69,7 +69,7 @@ print("Remy",remy_std_loss[:1000])
 
 
 plt.figure(figsize=(15, 7.5),facecolor='lightgrey')
-# plt.errorbar(x[:1000], [(maxime_loss[i]) for i in range(len(maxime_loss[:1000]))], yerr=[((maxime_std_loss[i]*0.5)) if (i%70==0) else 0 for i in range(len(maxime_std_loss[:1000]))], label='ACID', color='blue',ecolor='lightblue')
+# plt.errorbar(x[:1000], [(maxime_loss[i]) for i in range(len(maxime_loss[:1000]))], yerr=[((maxime_std_loss[i])) if (i%70==0) else 0 for i in range(len(maxime_std_loss[:1000]))], label='ACID', color='blue',ecolor='lightblue')
 # plt.errorbar(x[:1000], [(louise_loss[i]) for i in range(len(louise_loss[:1000]))], yerr=[((louise_std_loss[i])) if (i%75==0) else 0 for i in range(len(louise_std_loss[:1000]))], label='DAGMM', color='green',ecolor='lightgreen')
 # plt.errorbar(x[:1000], [(tanguy_loss[i]) for i in range(len(tanguy_loss[:1000]))], yerr=[((tanguy_std_loss[i])) if (i%80==0) else 0 for i in range(len(tanguy_std_loss[:1000]))], label='DNN', color='orange',ecolor='lightcoral')
 # plt.errorbar(x[:1000], [(remy_loss[i]) for i in range(len(remy_loss[:1000]))], yerr=[((remy_std_loss[i])) if (i%85==0) else 0 for i in range(len(remy_std_loss[:1000]))], label='N-BAIOT', color='purple',ecolor='violet')
